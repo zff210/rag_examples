@@ -1,0 +1,32 @@
+# 包含根目录文件
+include README.md
+include LICENSE
+include CHANGELOG.md
+
+# 包含所有项目文件
+recursive-include rag_examples *
+
+# 排除不需要的文件
+global-exclude *.pyc
+global-exclude *.pyo
+global-exclude *.pyd
+global-exclude __pycache__
+global-exclude .DS_Store
+global-exclude .git*
+global-exclude .env
+global-exclude .venv
+global-exclude venv
+global-exclude .idea
+global-exclude .vscode
+global-exclude *.log
+global-exclude *.tmp
+global-exclude *.bak
+
+# 包含所有Python文件
+recursive-include common *.py
+recursive-include tests *.py
+
+# 包含文档
+recursive-include docs *.md
+recursive-include docs *.rst
+recursive-include docs *.txt 
