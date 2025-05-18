@@ -10,10 +10,12 @@
   "dependencies": {
     "@headlessui/vue": "^1.7.16",
     "@heroicons/vue": "^2.0.18",
-    "@vueuse/core": "^10.3.0",
+    "@vueuse/core": "^10.11.1",
     "axios": "^1.4.0",
     "highlight.js": "^11.8.0",
     "marked": "^5.0.2",
+    "marked-highlight": "^2.2.1",
+    "marked-smartypants": "^1.1.9",
     "pinia": "^2.3.1",
     "tailwindcss": "^3.3.3",
     "vue": "^3.3.4",

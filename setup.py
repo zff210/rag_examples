@@ -19,10 +19,13 @@ setup(
         "python-dateutil>=2.8.2",
         "tqdm>=4.65.0",
         "uvicorn>=0.25.0",
-        "numpy>=1.24.0",
+        "numpy>=1.24.0,<2.0.0",
         "faiss-cpu>=1.7.4",
         "sentence-transformers>=2.2.0",
-        "torch>=2.0.0"
+        "torch>=2.0.0",
+        "openai>=1.0",
+        "anthropic>=0.35.0",
+        "python-multipart>=0.0.10"
     ],
     python_requires=">=3.8",
     # 支持本地开发

@@ -5,9 +5,13 @@
       <!-- 顶部控制栏 -->
       <div class="p-4 border-b border-gray-800">
         <div class="flex items-center justify-between">
-          <button @click="$emit('toggle')" class="text-gray-400 hover:text-white">
-            <span v-if="isCollapsed">→</span>
-            <span v-else>←</span>
+          <button @click="$emit('toggle')" class="text-gray-400 hover:text-white group relative">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12h18M3 6h18M3 18h18"/>
+            </svg>
+            <span class="absolute left-full ml-2 px-2 py-1 bg-gray-800 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+              {{ isCollapsed ? '展开侧边栏' : '收起侧边栏' }}
+            </span>
           </button>
           <h2 class="text-lg font-semibold">历史对话</h2>
           <button @click="$emit('new-chat')" class="text-gray-400 hover:text-white">

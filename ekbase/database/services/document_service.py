@@ -20,7 +20,20 @@ class DocumentService:
         self.db.commit()
         return self.get_by_id(document.id)
     
-    def list_all(self) -> List[Document]:
-        query = "SELECT * FROM documents"
+    def list_all(self, with_file_path: bool = False) -> List[Document]:
+        query = "SELECT id, file_name, created_at"
+        if with_file_path:
+            query += ", file_path"
+        query += " FROM documents"
         cursor = self.db.execute(query)
         return [Document.from_dict(dict(row)) for row in cursor]
+    
+    def delete(self, document_id: str):
+        query = "DELETE FROM documents WHERE id = ?"
+        self.db.execute(query, (document_id,))
+        self.db.commit()
+
+    def get_by_id(self, document_id: str) -> Document:
+        query = "SELECT * FROM documents WHERE id = ?"
+        cursor = self.db.execute(query, (document_id,))
+        return Document.from_dict(dict(cursor.fetchone()))

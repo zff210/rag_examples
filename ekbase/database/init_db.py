@@ -1,5 +1,8 @@
 import os
 from ekbase.database.utils import Database
+import logging
+
+logger = logging.getLogger(__name__)
 
 def init_database():
     """初始化数据库，创建必要的表"""
@@ -22,9 +25,9 @@ def init_database():
             if command:  # 确保不是空命令
                 db.execute(command)
         db.commit()
-        print(f"数据库初始化成功，数据库文件位置: {db.db_path}")
+        logger.info(f"数据库初始化成功，数据库文件位置: {db.db_path}")
     except Exception as e:
         db.rollback()
-        print(f"数据库初始化失败: {str(e)}")
+        logger.error(f"数据库初始化失败: {str(e)}")
     finally:
         db.close()

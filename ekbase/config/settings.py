@@ -12,14 +12,25 @@ DATABASE = {
     'echo': False
 }
 
+# 服务配置
+SERVER = {
+    'host': '0.0.0.0',
+    'port': 8000
+}
+
 # 日志配置
 LOGGING = {
+    # 日志文件存储位置
+    'log_dir': os.path.join(BASE_DIR, 'logs'),
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
         'standard': {
             'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
         },
+        'detailed': {
+            'format': '%(asctime)s [%(levelname)s] %(name)s [%(filename)s:%(lineno)d]: %(message)s'
+        }
     },
     'handlers': {
         'console': {
@@ -39,6 +50,16 @@ LOGGING = {
             'handlers': ['console', 'file'],
             'level': 'INFO',
             'propagate': True
+        },
+        'common.utils.vector_utils': {
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG',
+            'propagate': False
+        },
+        'ekbase.core.services.document_service': {
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG',
+            'propagate': False
         }
     }
 }
@@ -48,6 +69,7 @@ STORAGE = {
     'documents': os.path.join(BASE_DIR, 'storage', 'documents'),
     'vectors': os.path.join(BASE_DIR, 'storage', 'vectors'),
     'temp': os.path.join(BASE_DIR, 'storage', 'temp'),
+    'models': os.path.join(BASE_DIR, 'storage', 'models')
 }
 
 # 向量数据库配置
@@ -59,10 +81,11 @@ VECTOR_DB = {
 
 # 大模型配置
 LLM = {
-    'model_name': 'chatglm3-6b',
+    'model_name': 'doubao-1-5-thinking-pro-250415',
     'temperature': 0.7,
     'max_length': 2048,
     'top_p': 0.9,
+    'base_url': 'https://ark.cn-beijing.volces.com/api/v3'
 }
 
 # 安全配置

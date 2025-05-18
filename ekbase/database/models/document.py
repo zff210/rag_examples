@@ -22,6 +22,7 @@ class Document:
         return cls(
             id=data['id'],
             file_name=data['file_name'],
-            file_path=data['file_path'],
+            # 判断没有key file_path时，设置为空字符串
+            file_path=data.get('file_path', ''),
             created_at=datetime.fromisoformat(data['created_at']) if data.get('created_at') else None
         )

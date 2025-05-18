@@ -15,13 +15,6 @@ LOGGING['handlers']['console']['level'] = 'DEBUG'
 LOGGING['handlers']['file']['level'] = 'DEBUG'
 LOGGING['loggers']['']['level'] = 'DEBUG'
 
-# 大模型配置
-LLM.update({
-    'model_name': 'chatglm3-6b',
-    'temperature': 0.8,  # 开发环境使用更高的温度值
-    'max_length': 4096,  # 开发环境使用更长的上下文
-})
-
 # 缓存配置
 CACHE.update({
     'type': 'memory',  # 开发环境使用内存缓存
