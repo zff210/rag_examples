@@ -88,6 +88,9 @@
         <router-link to="/documents" class="mt-2 block w-full text-center py-2 bg-gray-800 rounded-lg hover:bg-gray-700">
           文档管理
         </router-link>
+        <router-link to="/interview" class="mt-2 block w-full text-center py-2 bg-gray-800 rounded-lg hover:bg-gray-700">
+          面试系统
+        </router-link>
       </div>
     </div>
   </div>

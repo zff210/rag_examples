@@ -10,13 +10,17 @@ class ChatRequest:
     # 是否启用联网搜索功能
     web_search: bool
     
-    # 是否启用Agent模式
-    agent_mode: bool
-    
+    # 是否启用mcp
+    mcp: bool
+
+    # 是否启用向量数据库
+    vector_db: bool
+
     # 入参为json，从json中解析并初始化
     def __init__(self, json_data: dict):
         self.query = json_data.get("query")
         self.session_id = json_data.get("session_id")
         self.web_search = json_data.get("web_search")
-        self.agent_mode = json_data.get("agent_mode")
+        self.mcp = json_data.get("mcp")
+        self.vector_db = json_data.get("vector_db")
         

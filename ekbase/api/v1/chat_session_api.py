@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException, Request
+from fastapi.responses import StreamingResponse
 from typing import List
 from ekbase.database.services.chat_session_service import ChatSessionService
 from ekbase.database.models.chat_session import ChatSession
@@ -56,3 +57,33 @@ async def stream_post(request: Request):
         error_msg = str(e)
         logger.error(f"聊天接口错误: {error_msg}", exc_info=True)
         raise HTTPException(status_code=500, detail=error_msg)
+    
+
+# 导出会话为markdown格式下载
+@router.get("/export/{session_id}")
+async def export_session(session_id: str):
+    try:
+        session_service = ChatSessionService()
+        session = await session_service.get_by_id(session_id)
+        if not session:
+            raise HTTPException(status_code=404, detail="Session not found")
+        
+        # 构建markdown内容
+        markdown_content = f"# 会话历史记录\n\n"
+        markdown_content += f"## 会话ID: {session_id}\n\n"
+        markdown_content += f"## 会话总结: {session['summary']}\n\n"
+        
+        for message in session.messages:
+            role = message['role']
+            content = message['content']
+            markdown_content += f"### {role}\n\n{content}\n\n"
+        
+        return StreamingResponse(
+            iter([markdown_content]), 
+            media_type="text/markdown", 
+            headers={"Content-Disposition": f"attachment; filename=session_{session_id}.md"}
+        )
+        
+    except Exception as e:
+        print(f"导出会话失败: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"导出会话失败: {str(e)}")

@@ -12,11 +12,26 @@ DATABASE = {
     'echo': False
 }
 
+# MCP配置
+MCP = {
+    # 请求大模型工具数量限制
+    'limit': 50
+}
+
 # 服务配置
 SERVER = {
     'host': '0.0.0.0',
-    'port': 8000
+    'port': 8000,
+    'reload': False,
+    'reload_dirs': []
 }
+
+# 搜索配置
+WEB_SEARCH = {
+    'api_key': os.getenv("BOCHAAI_SEARCH_API_KEY"),
+    'base_url': "https://api.bochaai.com/v1",
+    'count': 10
+}   
 
 # 日志配置
 LOGGING = {
@@ -85,7 +100,8 @@ LLM = {
     'temperature': 0.7,
     'max_length': 2048,
     'top_p': 0.9,
-    'base_url': 'https://ark.cn-beijing.volces.com/api/v3'
+    'base_url': 'https://ark.cn-beijing.volces.com/api/v3',
+    'api_key': os.getenv("OPENAI_API_KEY")
 }
 
 # 安全配置

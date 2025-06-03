@@ -11,12 +11,23 @@ export default defineConfig({
     },
   },
   server: {
+    host: true,
+    port: 5173,
+    strictPort: true,
     proxy: {
       '/api': {
         target: 'http://localhost:8000/api/v1',
         changeOrigin: true,
+        secure: false,
         rewrite: (path) => path.replace(/^\/api/, '')
       }
-    }
+    },
+    cors: true,
+    allowedHosts: [
+      'localhost',
+      'b9685e1.r7.vip.cpolar.cn',
+      '.cpolar.top',
+      'cpolar.top'
+    ]
   }
 })

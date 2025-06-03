@@ -28,11 +28,11 @@ web/*.ntvs*
 web/*.njsproj
 web/*.sln
 web/*.sw?
-*.html
-!web/index.html
 
 **/__pycache__/
 
 rag_examples.egg-info/
 
 ekbase/.venv/
+.env
+mcp_server/.venv/

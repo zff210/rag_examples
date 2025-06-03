@@ -3,7 +3,10 @@ from .settings import *
 # 开发环境特定配置
 
 # 调试模式
-DEBUG = True
+SERVER.update({
+    'reload': False,
+    'reload_dirs': ['ekbase']
+})
 
 # 数据库配置
 DATABASE.update({

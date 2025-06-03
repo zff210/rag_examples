@@ -9,7 +9,6 @@ setup(
     packages=find_packages(),
     install_requires=[
         "fastapi>=0.68.0",
-        "uvicorn>=0.15.0",
         "sqlalchemy>=1.4.0",
         "python-docx>=0.8.11",
         "PyPDF2>=3.0.0",
@@ -25,7 +24,11 @@ setup(
         "torch>=2.0.0",
         "openai>=1.0",
         "anthropic>=0.35.0",
-        "python-multipart>=0.0.10"
+        "python-multipart>=0.0.10",
+        "fastmcp>=2.2.5",
+        "openai-whisper>=1.0.0",
+        "psutil>=6.0.0",
+        "vosk>=0.3.4"
     ],
     python_requires=">=3.8",
     # 支持本地开发

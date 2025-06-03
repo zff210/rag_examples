@@ -40,6 +40,12 @@
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
                 <button 
+                  @click="handleViewTools(server.id)" 
+                  class="text-blue-600 hover:text-blue-900"
+                >
+                  查看工具
+                </button>
+                <button 
                   @click="handleRefreshTools(server.id)" 
                   class="text-primary-600 hover:text-primary-900"
                   :disabled="server.isRefreshing"
@@ -137,6 +143,46 @@
               {{ isSubmitting ? '提交中...' : (editingServerId ? '更新' : '添加') }}
             </button>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 工具列表弹窗 -->
+    <div v-if="showToolsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+      <div class="bg-white rounded-lg p-6 w-full max-w-4xl">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-medium text-gray-900">
+            工具列表
+          </h3>
+          <button @click="closeToolsModal" class="text-gray-400 hover:text-gray-500">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead>
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">工具名称</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">描述</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">版本</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">状态</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr v-for="tool in currentTools" :key="tool.name">
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ tool.name }}</td>
+                <td class="px-6 py-4 text-sm text-gray-500">{{ tool.description }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ tool.version }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <span :class="tool.status === 'active' ? 'text-green-600' : 'text-red-600'">
+                    {{ tool.status === 'active' ? '可用' : '不可用' }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -334,6 +380,19 @@ const handleRefreshTools = async (serverId) => {
   } finally {
     server.isRefreshing = false
   }
+}
+
+const showToolsModal = ref(false)
+const currentTools = ref([])
+
+const handleViewTools = (serverId) => {
+  currentTools.value = serverTools.value[serverId] || []
+  showToolsModal.value = true
+}
+
+const closeToolsModal = () => {
+  showToolsModal.value = false
+  currentTools.value = []
 }
 
 onMounted(() => {

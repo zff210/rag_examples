@@ -1,6 +1,6 @@
 from http.client import HTTPException
 from fastapi import APIRouter, UploadFile, File
-from ekbase.core.services.document_service import DocumentCoreService
+from ekbase.core.services.document_core_service import DocumentCoreService
 
 router = APIRouter(prefix="/documents", tags=["documents"])
 

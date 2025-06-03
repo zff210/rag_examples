@@ -1,6 +1,8 @@
 import asyncio
 import json
 from ekbase.core.models.chat_request import ChatRequest
+from ekbase.core.models.prompt_process_model import PromptProcessModel
+from ekbase.handler.handlerimpl.history_message_handler import HistoryMessageHandler
 from fastapi.responses import StreamingResponse
 from ekbase.database.services.chat_session_service import ChatSessionService
 from ekbase.database.services.chat_message_service import ChatMessageService
@@ -8,7 +10,7 @@ from ekbase.database.models.chat_message import ChatMessage
 from ekbase.database.models.chat_session import ChatSession
 from datetime import datetime
 import uuid
-from ekbase.core.services.document_service import DocumentCoreService
+from ekbase.core.services.document_core_service import DocumentCoreService
 import logging
 from ekbase.config import LLM
 from common.utils.llm_utils import LLMUtils
@@ -43,7 +45,23 @@ class ChatService:
             has_session = session is not None
             
             # 构建提示词
-            prompt = await self._build_prompt(chat_request)
+            process_model = PromptProcessModel()
+            prompt_handler = HistoryMessageHandler(chat_request, process_model)
+            prompt = await prompt_handler.build_prompt()
+
+            # 如果已经结束，则直接返回结果
+            if process_model.is_end:
+                # 响应完成后，将完整会话保存到数据库
+                if has_session:
+                    await self.add_message_to_session(session_id, chat_request.query, process_model.final_result)
+                else:
+                    await self.create_new_chat_session(session_id, chat_request.query, process_model.final_result)
+
+                return StreamingResponse(
+                    generate(initial_content=process_model.final_result),
+                    media_type="text/event-stream",
+                    headers={"Cache-Control": "no-cache", "Connection": "keep-alive", "Transfer-Encoding": "chunked"}
+                )
             
             # 用于保存完整响应
             full_response = ""
@@ -165,27 +183,3 @@ class ChatService:
         except Exception as e:
             logger.error(f"向会话添加消息失败: {str(e)}", exc_info=True)
             raise RuntimeError(f"向会话添加消息失败: {str(e)}")
-    
-    async def _build_prompt(self, chat_request: ChatRequest) -> str:
-        """构建提示词"""
-        try:
-            # 获取历史消息
-            messages = await self.message_service.list_by_session(chat_request.session_id)
-            
-            # 构建提示词
-            prompt = ""
-            # TODO: 从向量数据库中获取上下文
-            prompt += f"上下文信息：\n未获取到上下文\n\n"
-            
-            if messages:
-                prompt += "历史对话：\n"
-                for msg in messages:
-                    prompt += f"{msg.role}: {msg.content}\n"
-                prompt += "\n"
-            
-            prompt += f"用户问题：{chat_request.query}"
-            return prompt
-            
-        except Exception as e:
-            logger.error(f"构建提示词失败: {str(e)}", exc_info=True)
-            raise RuntimeError(f"构建提示词失败: {str(e)}")
