@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import InterviewQuestionsView from '@/views/InterviewQuestionsView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -27,6 +28,14 @@ const router = createRouter({
       path: '/interview/take',
       name: 'interview-take',
       component: () => import('../views/InterviewView.vue')
+    },
+    {
+      path: '/interview/questions',
+      name: 'interview-questions',
+      component: InterviewQuestionsView,
+      meta: {
+        requiresAuth: true
+      }
     }
   ]
 })

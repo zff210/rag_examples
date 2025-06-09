@@ -7,6 +7,7 @@ from ekbase.core.services.interview_core_service import InterviewCoreService
 from ekbase.database.models.position import Position
 from fastapi.responses import StreamingResponse
 from urllib.parse import quote
+from ekbase.core.models.generate_questions_request import GenerateQuestionsRequest
 
 router = APIRouter(prefix="/interview", tags=["interview"])
 
@@ -127,10 +128,15 @@ async def get_resume(candidate_id: int):
     )
 
 @router.post("/candidates/{interview_id}/generate_interview_questions")
-async def generate_interview_questions(interview_id: int, question_count: int = 10):
+async def generate_interview_questions(interview_id: int, request: GenerateQuestionsRequest):
     """生成面试题"""
     interview_core_service = InterviewCoreService()
-    await interview_core_service.generate_interview_questions(interview_id, question_count)
+    await interview_core_service.generate_interview_questions(
+        interview_id, 
+        request.question_count, 
+        request.with_example_answer,
+        request.append
+    )
     return True
     
 

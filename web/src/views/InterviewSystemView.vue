@@ -81,12 +81,14 @@
           <InterviewList
             :interviews="interviews"
             :candidates="candidates"
+            :positions="positions"
             @edit="showInterviewForm"
-            @delete="handleDeleteInterview"
             @copy-link="handleCopyInterviewLink"
             @download-report="handleDownloadReport"
+            @delete="handleDeleteInterview"
             @generate-questions="handleGenerateQuestions"
             @open-interview="handleOpenInterview"
+            @view-questions="handleViewQuestions"
           />
         </div>
       </div>
@@ -429,6 +431,22 @@
       </div>
     </div>
 
+    <!-- 面试题列表模态框 -->
+    <div v-if="showQuestionModal" class="modal-wrapper">
+      <div class="modal-content max-w-4xl">
+        <div class="modal-header">
+          <h3 class="text-lg font-medium text-gray-900">面试题列表</h3>
+          <button @click="showQuestionModal = false" class="modal-close">×</button>
+        </div>
+        <div class="modal-body">
+          <InterviewQuestionList
+            v-if="selectedInterview"
+            :interview="selectedInterview"
+          />
+        </div>
+      </div>
+    </div>
+
     <!-- Toast提示 -->
     <ToastManager ref="toastManager" />
 
@@ -451,6 +469,7 @@ import ConfirmDialog from '../components/ConfirmDialog.vue'
 import PositionList from '../components/interview/PositionList.vue'
 import CandidateList from '../components/interview/CandidateList.vue'
 import InterviewList from '../components/interview/InterviewList.vue'
+import InterviewQuestionList from '@/components/interview/InterviewQuestionList.vue'
 import {
   fetchPositions,
   createPosition,
@@ -539,6 +558,8 @@ const availablePositions = ref([])
 const showQuestionCountModal = ref(false)
 const questionCount = ref(10)
 const currentInterviewId = ref(null)
+const showQuestionModal = ref(false)
+const selectedInterview = ref(null)
 
 // 生命周期钩子
 onMounted(() => {
@@ -953,6 +974,11 @@ const confirmGenerateQuestions = async () => {
 const handleOpenInterview = (token) => {
   const url = `${window.location.origin}/interview/take?token=${token}`
   window.open(url, '_blank')
+}
+
+const handleViewQuestions = (interview) => {
+  selectedInterview.value = interview
+  showQuestionModal.value = true
 }
 </script>
 

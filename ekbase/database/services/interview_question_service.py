@@ -169,3 +169,14 @@ class InterviewQuestionService:
         except Exception as e:
             logger.error(f"更新示例答案失败: {str(e)}", exc_info=True)
             raise RuntimeError(f"更新示例答案失败: {str(e)}")
+    
+    async def delete_by_interview_id(self, interview_id: int) -> bool:
+        """删除指定面试的所有问题"""
+        try:
+            query = "DELETE FROM interview_questions WHERE interview_id = ?"
+            self.db.execute(query, (interview_id,))
+            self.db.commit()
+            return True
+        except Exception as e:
+            logger.error(f"删除面试问题失败: {str(e)}", exc_info=True)
+            raise RuntimeError(f"删除面试问题失败: {str(e)}")

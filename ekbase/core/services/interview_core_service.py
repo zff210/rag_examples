@@ -186,7 +186,7 @@ class InterviewCoreService:
         thread = threading.Thread(target=run)
         thread.start()
 
-    async def generate_interview_questions(self, interview_id: int, question_count: int = 10) -> bool:
+    async def generate_interview_questions(self, interview_id: int, question_count: int = 10, with_example_answer: bool = False, append: bool = False) -> bool:
         """生成面试题"""
         interview = await self.interview_service.get_by_id(interview_id)
         if not interview:
@@ -200,16 +200,19 @@ class InterviewCoreService:
         if not position:
             raise HTTPException(status_code=404, detail="Position not found")
         interview.status = 1
-        interview.question_count = question_count
+        interview.question_count = question_count if not append else (interview.question_count if interview.question_count else 0) + question_count
         await self.interview_service.update(interview)
+
+        if not append:
+            await self.interview_question_service.delete_by_interview_id(interview_id)
         
         # 在新的事件循环中运行面试题生成任务
         self._run_in_new_event_loop(
-            self.generate_interview_questions_by_llm(interview, candidate, position, question_count)
+            self.generate_interview_questions_by_llm(interview, candidate, position, question_count, with_example_answer)
         )
         return True
     
-    async def generate_interview_questions_by_llm(self, interview: Interview, candidate: Candidate, position: Position, question_count: int = 10) -> bool:
+    async def generate_interview_questions_by_llm(self, interview: Interview, candidate: Candidate, position: Position, question_count: int = 10, with_example_answer: bool = False) -> bool:
         '''
         使用大模型生成面试题
         '''
@@ -224,6 +227,8 @@ class InterviewCoreService:
                 question=question['question'],
                 score_standard=question['score_standard']
             )   
+            if with_example_answer:
+                interview_question.example_answer = await self.get_example_answer_by_llm(interview_question)
             interview_questions.append(interview_question)
         
         # 在新线程中创建新的数据库连接
@@ -336,11 +341,22 @@ class InterviewCoreService:
             raise HTTPException(status_code=404, detail="Question not found")
         if question.example_answer:
             return question.example_answer
-        response = self.llm.chat(
-            messages=[
-                {"role": "system", "content": "请根据以下问题和评分标准，生成一个高分示例答案"},
-                {"role": "user", "content": f"问题：{question.question}\n评分标准：{question.score_standard}"}],
-            stream=False
-        )
+        response = await self.get_example_answer_by_llm(question)
         await self.interview_question_service.update_example_answer(question.id, response)
         return response
+    
+    async def get_example_answer_by_llm(self, question: InterviewQuestion) -> str:
+        '''
+        使用大模型生成示例答案
+        '''
+        prompt = f"""
+        请根据以下问题和评分标准，生成一个高分示例答案：
+        问题：{question.question}
+        评分标准：{question.score_standard}
+        """
+        return self.llm.chat(
+            messages=[
+                {"role": "system", "content": "请根据以下问题和评分标准，生成一个高分示例答案"},
+                {"role": "user", "content": prompt}],
+            stream=False
+        )

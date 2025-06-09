@@ -66,9 +66,11 @@ export const deleteInterview = async (id) => {
   await api.delete(`${prefix}/interviews/${id}`)
 }
 
-export const generateInterviewQuestions = async (interviewId, questionCount) => {
+export const generateInterviewQuestions = async (interviewId, questionCount, withExampleAnswer = false, append = false) => {
   const response = await api.post(`${prefix}/candidates/${interviewId}/generate_interview_questions`, {
-    question_count: questionCount
+    question_count: questionCount,
+    with_example_answer: withExampleAnswer,
+    append: append
   })
   return response.data
 }
@@ -98,7 +100,9 @@ export const fetchInterviewQuestion = async (token, params = {}) => {
 
 export const getExampleAnswer = async (token, questionId) => {
   const response = await api.get(`${prefix}/interviews/${token}/get_example_answer`, {
-    params: { question_id: questionId }
+    params: {
+      question_id: questionId
+    }
   })
   return response.data
 }
